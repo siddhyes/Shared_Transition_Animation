@@ -19,6 +19,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import com.demo.sharedtransitionanimation.navigation.ScreenRoutes
 import com.demo.sharedtransitionanimation.ui.theme.SharedTransitionAnimationTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,34 +30,27 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SharedTransitionAnimationTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(title = { Text(text = "Food List") })
-                    }
-                ) { padding ->
+                Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+                    TopAppBar(title = { Text(text = "Food List") })
+                }) { padding ->
                     val navController = rememberNavController()
                     SharedTransitionLayout(modifier = Modifier.padding(padding)) {
-                        NavHost(navController = navController, startDestination = "FoodList") {
-                            composable("FoodList") {
+                        NavHost(
+                            navController = navController, startDestination = ScreenRoutes.FoodList
+                        ) {
+                            composable<ScreenRoutes.FoodList> {
                                 FoodListCompose(animatedContentScope = this) {
-                                    navController.navigate("details/${it.name}/${it.desc}/${it.image}")
+                                    navController.navigate(
+                                        ScreenRoutes.FoodDetails(
+                                            name = it.name, desc = it.desc, image = it.image
+                                        )
+                                    )
                                 }
                             }
-                            composable(
-                                route = "details/{name}/{desc}/{image}",
-                                arguments = listOf(navArgument("name") {
-                                    type = NavType.StringType
-                                }, navArgument("desc") {
-                                    type = NavType.IntType
-                                }, navArgument("image") {
-                                    type = NavType.IntType
-                                })
-                            ) {
+                            composable<ScreenRoutes.FoodDetails> { backStackEntry ->
+                                val data = backStackEntry.toRoute<ScreenRoutes.FoodDetails>()
                                 val food = Food(
-                                    name = it.arguments?.getString("name") ?: "",
-                                    desc = it.arguments?.getInt("desc") ?: 0,
-                                    image = it.arguments?.getInt("image") ?: 0
+                                    name = data.name, desc = data.desc, image = data.image
                                 )
                                 DetailsScreen(food = food, animatedContentScope = this)
                             }
