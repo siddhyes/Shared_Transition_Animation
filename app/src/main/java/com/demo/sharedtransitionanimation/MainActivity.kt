@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,11 +31,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SharedTransitionAnimationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-                    TopAppBar(title = { Text(text = "Food List") })
-                }) { padding ->
+                Surface {
                     val navController = rememberNavController()
-                    SharedTransitionLayout(modifier = Modifier.padding(padding)) {
+                    SharedTransitionLayout() {
                         NavHost(
                             navController = navController, startDestination = ScreenRoutes.FoodList
                         ) {
@@ -56,6 +55,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+
                 }
 
             }
